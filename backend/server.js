@@ -30,9 +30,19 @@ mongoose.connect(MONGODB_URI, {
     })
 
 const userSchema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
+    nome: String,
     email: String,
+    telefone: String,
+    endereco: String,
+    formacaoAcademica: [
+        { curso: String, instituicao: String, anoConclusao: String }
+    ],
+    experienciaProfissional: [
+        { empresa: String, cargo: String, periodo: String }
+    ],
+    habilidades: String,
+    idiomas: String,
+    objetivo: String,
 })
 
 const User = mongoose.model('User', userSchema)

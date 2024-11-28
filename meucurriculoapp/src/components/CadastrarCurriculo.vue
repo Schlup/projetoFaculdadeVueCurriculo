@@ -79,14 +79,14 @@
                                 <h3 class="text-lg font-medium text-gray-700 mb-2">Experiência profissional</h3>
                                 <div v-for="(experiencia, index) in form.experienciaProfissional" :key="index"
                                     class="space-y-2">
-                                    <input v-model="experiencia.empresa" type="text"
-                                        :placeholder="'Empresa ' + (index + 1)" required
+                                    <input v-model="experiencia.empresa" type="text" :placeholder="'Empresa ' + (index + 1)"
+                                        required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                     <input v-model="experiencia.cargo" type="text" :placeholder="'Cargo ' + (index + 1)"
                                         required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                    <input v-model="experiencia.periodo" type="text"
-                                        :placeholder="'Período ' + (index + 1)" required
+                                    <input v-model="experiencia.periodo" type="text" :placeholder="'Período ' + (index + 1)"
+                                        required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                 </div>
                                 <button @click.prevent="adicionarExperiencia" type="button"
@@ -97,8 +97,7 @@
 
                             <!-- Habilidades -->
                             <div>
-                                <label for="habilidades"
-                                    class="block text-sm font-medium text-gray-700">Habilidades</label>
+                                <label for="habilidades" class="block text-sm font-medium text-gray-700">Habilidades</label>
                                 <textarea v-model="form.habilidades" id="habilidades" required rows="3"
                                     placeholder="Liste suas habilidades separadas por vírgula"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"></textarea>
@@ -144,6 +143,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 const router = useRouter()
 
@@ -167,10 +167,41 @@ const adicionarExperiencia = () => {
     form.value.experienciaProfissional.push({ empresa: '', cargo: '', periodo: '' })
 }
 
-const handleSubmit = () => {
-    // Aqui você pode adicionar a lógica para enviar os dados do formulário
-    console.log('Formulário enviado:', form.value)
-    // Redirecionar para a página inicial após o envio bem-sucedido
-    router.push('/')
-}
+const handleSubmit = async () => {
+    try {
+        const response = await axios.post("http://localhost:3000/api/users", {
+            nome: form.value.nome,
+            email: form.value.email,
+            telefone: form.value.telefone,
+            endereco: form.value.endereco,
+            formacaoAcademica: form.value.formacaoAcademica,
+            experienciaProfissional: form.value.experienciaProfissional,
+            habilidades: form.value.habilidades,
+            idiomas: form.value.idiomas,
+            objetivo: form.value.objetivo,
+        });
+
+        console.log("Usuário cadastrado:", response.data);
+        alert("Cadastro realizado com sucesso!");
+
+        // Limpar os campos do formulário após o envio bem-sucedido
+        form.value = {
+            nome: '',
+            email: '',
+            telefone: '',
+            endereco: '',
+            formacaoAcademica: [{ curso: '', instituicao: '', anoConclusao: '' }],
+            experienciaProfissional: [{ empresa: '', cargo: '', periodo: '' }],
+            habilidades: '',
+            idiomas: '',
+            objetivo: '',
+        };
+
+        // Redirecionar para outra página após o cadastro (se necessário)
+        // router.push('/alguma-rota');
+    } catch (error) {
+        console.error("Erro ao cadastrar:", error);
+        alert("Erro ao realizar o cadastro. Por favor, tente novamente.");
+    }
+};
 </script>
